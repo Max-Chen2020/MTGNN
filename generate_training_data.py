@@ -26,7 +26,8 @@ def generate_graph_seq2seq_io_data(
     """
 
     num_samples, num_nodes = df1.shape
-    data = np.expand_dims(df1.values, axis=-1)
+    data1 = np.expand_dims(df1.values, axis=-1)
+    data2 = np.expand_dims(df2.values, axis=-1)
     data_list = [data1, data2]
     if add_time_in_day:
         time_ind = (df1.index.values - df1.index.values.astype("datetime64[D]")) / np.timedelta64(1, "D")
