@@ -10,7 +10,7 @@ import pandas as pd
 
 
 def generate_graph_seq2seq_io_data(
-        df, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
+        df1, df2, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
 ):
     """
     Generate samples from
@@ -25,11 +25,11 @@ def generate_graph_seq2seq_io_data(
     # y: (epoch_size, output_length, num_nodes, output_dim)
     """
 
-    num_samples, num_nodes = df.shape
-    data = np.expand_dims(df.values, axis=-1)
-    data_list = [data]
+    num_samples, num_nodes = df1.shape
+    data = np.expand_dims(df1.values, axis=-1)
+    data_list = [data1, data2]
     if add_time_in_day:
-        time_ind = (df.index.values - df.index.values.astype("datetime64[D]")) / np.timedelta64(1, "D")
+        time_ind = (df1.index.values - df1.index.values.astype("datetime64[D]")) / np.timedelta64(1, "D")
         time_in_day = np.tile(time_ind, [1, num_nodes, 1]).transpose((2, 1, 0))
         data_list.append(time_in_day)
     if add_day_in_week:
@@ -54,18 +54,15 @@ def generate_graph_seq2seq_io_data(
 
 
 def generate_train_val_test(args):
-    df = pd.read_hdf(args.traffic_df_filename)
+    df1 = pd.read_hdf(args.traffic_df_filename1)
+	df2 = pd.read_hdf(args.traffic_df_filename2)
     # 0 is the latest observed sample.
-    x_offsets = np.sort(
-        # np.concatenate(([-week_size + 1, -day_size + 1], np.arange(-11, 1, 1)))
-        np.concatenate((np.arange(-11, 1, 1),))
-    )
-    # Predict the next one hour
-    y_offsets = np.sort(np.arange(1, 13, 1))
+    x_offsets = np.arange(-11, 1, 1)    # Predict the next one hour
+    y_offsets = np.arange(1, 13, 1)
     # x: (num_samples, input_length, num_nodes, input_dim)
     # y: (num_samples, output_length, num_nodes, output_dim)
     x, y = generate_graph_seq2seq_io_data(
-        df,
+        df1, df2,
         x_offsets=x_offsets,
         y_offsets=y_offsets,
         add_time_in_day=True,
