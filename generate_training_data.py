@@ -56,7 +56,7 @@ def generate_graph_seq2seq_io_data(
 
 def generate_train_val_test(args):
     df1 = pd.read_hdf(args.traffic_df_filename1)
-	df2 = pd.read_hdf(args.traffic_df_filename2)
+    df2 = pd.read_hdf(args.traffic_df_filename2)
     # 0 is the latest observed sample.
     x_offsets = np.arange(-11, 1, 1)    # Predict the next one hour
     y_offsets = np.arange(1, 13, 1)
@@ -112,10 +112,16 @@ if __name__ == "__main__":
         "--output_dir", type=str, default="data/", help="Output directory."
     )
     parser.add_argument(
-        "--traffic_df_filename",
+        "--traffic_df_filename1",
         type=str,
-        default="data/metr-la.h5",
-        help="Raw traffic readings.",
+        default="data/speed.h5",
+        help="Raw traffic readings for speed.",
+    )
+    parser.add_argument(
+        "--traffic_df_filename2",
+        type=str,
+        default="data/flow.h5",
+        help="Raw traffic readings for flow.",
     )
     args = parser.parse_args()
     main(args)
