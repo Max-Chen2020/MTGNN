@@ -114,13 +114,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--traffic_df_filename1",
         type=str,
-        default="data/speed.h5",
+        default="data/speed_pems.h5",
         help="Raw traffic readings for speed.",
     )
     parser.add_argument(
         "--traffic_df_filename2",
         type=str,
-        default="data/flow.h5",
+        default="data/flow_pems.h5",
         help="Raw traffic readings for flow.",
     )
     args = parser.parse_args()
