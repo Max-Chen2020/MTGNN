@@ -53,7 +53,7 @@ parser.add_argument('--step_size1',type=int,default=2500,help='step_size')
 parser.add_argument('--step_size2',type=int,default=100,help='step_size')
 
 
-parser.add_argument('--epochs',type=int,default=50,help='')
+parser.add_argument('--epochs',type=int,default=100,help='')
 parser.add_argument('--print_every',type=int,default=50,help='')
 parser.add_argument('--seed',type=int,default=101,help='random seed')
 parser.add_argument('--save',type=str,default='./save/',help='save path')
@@ -64,7 +64,7 @@ parser.add_argument('--tanhalpha',type=float,default=3,help='adj alpha')
 
 parser.add_argument('--num_split',type=int,default=1,help='number of splits for graphs')
 
-parser.add_argument('--runs',type=int,default=1,help='number of runs')
+parser.add_argument('--runs',type=int,default=10,help='number of runs')
 
 
 
@@ -135,7 +135,7 @@ def main(runid):
                 id = torch.tensor(id).to(device)
                 tx = trainx[:, :, id, :]
                 ty = trainy[:, :, id, :]
-                metrics = engine.train(tx, ty[:,:2,:,:],id)
+                metrics = engine.train(tx, ty[:,0,:,:],id)
                 train_loss.append(metrics[0])
                 train_mape.append(metrics[1])
                 train_rmse.append(metrics[2])
@@ -155,7 +155,7 @@ def main(runid):
             testx = testx.transpose(1, 3)
             testy = torch.Tensor(y).to(device)
             testy = testy.transpose(1, 3)
-            metrics = engine.eval(testx, testy[:,:2,:,:])
+            metrics = engine.eval(testx, testy[:,0,:,:])
             valid_loss.append(metrics[0])
             valid_mape.append(metrics[1])
             valid_rmse.append(metrics[2])
@@ -192,7 +192,7 @@ def main(runid):
     #valid data
     outputs = []
     realy = torch.Tensor(dataloader['y_val']).to(device)
-    realy = realy.transpose(1,3)[:,:2,:,:]
+    realy = realy.transpose(1,3)[:,0,:,:]
 
     for iter, (x, y) in enumerate(dataloader['val_loader'].get_iterator()):
         testx = torch.Tensor(x).to(device)
@@ -212,7 +212,7 @@ def main(runid):
     #test data
     outputs = []
     realy = torch.Tensor(dataloader['y_test']).to(device)
-    realy = realy.transpose(1, 3)[:, :2, :, :]
+    realy = realy.transpose(1, 3)[:, 0, :, :]
 
     for iter, (x, y) in enumerate(dataloader['test_loader'].get_iterator()):
         testx = torch.Tensor(x).to(device)
